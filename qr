@@ -3,36 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR Code Data</title>
+    <title>QR Code Scanner</title>
+    <script src="https://unpkg.com/html5-qrcode" defer></script>
     <style>
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            padding: 50px;
+            padding: 20px;
         }
-        h1 {
-            color: #333;
+        #qr-reader {
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
         }
-        p {
-            font-size: 20px;
-            color: #555;
+        #qr-result {
+            margin-top: 20px;
+            font-size: 1.2em;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <h1>QR Code Content</h1>
-    <p id="qrData">Loading...</p>
-
+    <h1>QR Code Scanner</h1>
+    <div id="qr-reader"></div>
+    <p id="qr-result">Scan a QR code to see the content here.</p>
+    
     <script>
-        // Get the "data" parameter from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const qrData = urlParams.get("data");
-
-        if (qrData) {
-            document.getElementById("qrData").textContent = qrData;
-        } else {
-            document.getElementById("qrData").textContent = "No data found!";
+        function onScanSuccess(decodedText, decodedResult) {
+            document.getElementById('qr-result').innerText = `Scanned: ${decodedText}`;
         }
+        
+        function onScanFailure(error) {
+            console.warn(`QR scan failed: ${error}`);
+        }
+        
+        let qrScanner = new Html5QrcodeScanner("qr-reader", { fps: 10, qrbox: 250 });
+        qrScanner.render(onScanSuccess, onScanFailure);
     </script>
 </body>
 </html>
